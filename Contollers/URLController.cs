@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using url_shortener_backend.Data;
+using url_shortener_backend.Helpers;
 using url_shortener_backend.Models;
 
 namespace url_shortener_backend.Contollers;
@@ -19,7 +20,7 @@ public class URLController : Controller
 	[HttpGet("{input}")]
 	public IActionResult Get(string input)
 	{
-		int id = int.Parse(input);
+		int id = Base62.Decode(input);
 
 		var url = _db.URLs.Find(id);
 		if (url == null)
@@ -34,6 +35,9 @@ public class URLController : Controller
 	{
 		_db.URLs.Add(url);
 		_db.SaveChanges();
-		return Ok(url);
+
+		string encoded = Base62.Encode(url.Id);
+
+		return Created(encoded, url);
 	}
 }
