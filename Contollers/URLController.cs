@@ -27,7 +27,7 @@ public class URLController : Controller
 		{
 			return NotFound();
 		}
-		return Redirect(url.EncodedURL);
+		return Ok(url);
 	}
 
 	[HttpPost]
