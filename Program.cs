@@ -7,6 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", builder =>
+        builder.WithOrigins("http://localhost:8080")  // Frontend port
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .WithExposedHeaders("Location"));
+});
+
 builder.Services.AddDbContext<AppDbContext>( options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
@@ -14,6 +23,8 @@ builder.Services.AddDbContext<AppDbContext>( options =>
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
